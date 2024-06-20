@@ -104,3 +104,113 @@ const filmy = [
 		premiera: '2022-12-24',
 	},
 ]
+
+
+
+let idFilmu = location.hash.slice(1);
+
+let film;
+
+for (let i = 0; i < filmy.length; i++) {
+	if (idFilmu === filmy[i].id) {
+		film = filmy[i];
+		break;
+	}
+}
+
+document.querySelector("#detail-filmu .card-title").innerHTML = film.nazev;
+document.querySelector("#detail-filmu .card-text").innerHTML = film.popis;
+document.querySelector("#detail-filmu img").setAttribute("src", film.plakat.url);
+
+
+
+
+let formular = document.querySelector("#note-form");
+
+function odevzdat(event) {
+	event.preventDefault();
+	let textovePole = document.querySelector("#message-input");
+	if (textovePole.value === "") {
+		textovePole.classList.add("is-invalid");
+		return;
+	} else {
+		textovePole.classList.remove("is-invalid");
+	}
+	let checkbox = document.querySelector("#terms-checkbox");
+	if (!checkbox.checked) {
+		checkbox.classList.add("is-invalid");
+		return;
+	} else {
+		checkbox.classList.remove("is-invalid");
+	}
+	formular.innerHTML = `<p class="card-text">${textovePole.value}</p>`;
+}
+
+formular.addEventListener("submit", odevzdat, false);
+
+let hezkeDatum = dayjs(film.premiera).format('D. M. YYYY');
+
+document.querySelector("#premiera").innerHTML = `Premiéra <strong>${hezkeDatum}</strong>`;
+
+
+
+let elementy = document.querySelectorAll(".fa-star");
+
+function hvezdicky(cislo) {
+	for (let i = 0; i < elementy.length; i++) {
+		let element = elementy[i];
+		if (i + 1 <= cislo) {
+			element.classList.remove("far");
+			element.classList.add("fas");
+		} else {
+			element.classList.remove("fas");
+			element.classList.add("far");
+		}
+	}
+}
+
+function ukazatel(event) {
+	let element = event.srcElement;
+	let cislo = Number(element.innerHTML);
+	hvezdicky(cislo);
+}
+
+for (let i = 0; i < elementy.length; i++) {
+	let element = elementy[i];
+	element.addEventListener("click", ukazatel);
+}
+
+
+
+let prehravac = document.querySelector("#prehravac");
+
+function prehrat() {
+	let video = document.querySelector("video");
+	video.play();
+	prehravac.classList.add("playing");
+}
+
+function pozastavit() {
+	let video = document.querySelector("video");
+	video.pause();
+	prehravac.classList.remove("playing");
+}
+
+if (prehravac !== null) {
+	let play = document.querySelector(".play");
+	play.addEventListener("click", prehrat);
+	let pause = document.querySelector(".pause");
+	pause.addEventListener("click", pozastavit);
+}
+
+function zobrazCas() {
+	let prvek = document.querySelector(".current-time");
+	let cas = Math.floor(video.currentTime);
+	let minuty = Math.floor(cas / 60);
+	let sekundy = cas - minuty * 60;
+	prvek.innerHTML = `${minuty}:${sekundy}`;
+}
+
+let video = document.querySelector("video");
+video.addEventListener("timeupdate", zobrazCas);
+
